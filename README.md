@@ -7,3 +7,7 @@ Controls:
 - Left click to shoot
 - Move cursor to aim
 - Space to dash
+
+Recommended:
+- Press F11 to enable full screen
+- Set browser zoom to 100% 
