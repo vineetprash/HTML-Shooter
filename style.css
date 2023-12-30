@@ -1,0 +1,104 @@
+.centerall {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  text-shadow: 0 0 10px 50% black;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: rgb(0, 4, 29);
+  z-index: -10;
+}
+
+.bullet {
+  position: absolute;
+  background: black;
+  aspect-ratio: 1;
+  width: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 5px 2px white;
+  z-index: 0;
+  user-select: none;
+}
+
+.enemy {
+  position: absolute;
+  background: white;
+  aspect-ratio: 1;
+  z-index: 0;
+  user-select: none;
+}
+
+#player1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-left: 30px solid white;
+  border-top: 30px solid transparent;
+  border-bottom: 30px solid transparent;
+  width: 0px;
+  height: 0px;
+  /* box-shadow: 0 0 5px #000000; */
+  border-radius: 50%;
+
+
+}
+
+.endscreen {
+  flex-direction: column;
+  padding: 10px;
+  z-index: 5;
+
+}
+
+.fadeaway {
+
+  transition: opacity 2s;
+  /* Adjust the duration as needed */
+  opacity: 0;
+
+}
+
+.scoreboard {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  height: 5%;
+  padding-top: 10px;
+  z-index: 5;
+  user-select: none;
+}
+
+#display {
+  position: relative;
+  bottom: 50px;
+  font-size: 60px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: rgb(155, 156, 167);
+  text-align: center;
+  user-select: none;
+}
+
+#score {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 40px;
+  font-style: bold;
+  color: white;
+  user-select: none;
+}
+
+#display {
+  display: none;
+}
+
+#reset {
+  display: none;
+  user-select: none;
+}
