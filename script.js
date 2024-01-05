@@ -25,7 +25,7 @@ const PLAYER_WIDTH = 30;
 const PLAYER_HEIGHT = 60;
 
 const SPEED = 5;
-const BULLET_SPEED = 10;
+const BULLET_SPEED = 10; 
 const ENEMY_SPEED = 2;
 const MAX_BULLETS = 10;
 const MAX_ENEMIES = 10;
@@ -36,7 +36,7 @@ const SPAWN_RATE = 1000; // in ms
 
 // audio
 const Audio_Shoot = new Audio(`Audio\\shoot1.mp3`)
-
+const Game_Music = new Audio(`Audio\\game-music.mp3`)
 
 
 body.style.width = `${screen.width}px`;
@@ -221,12 +221,14 @@ function updateScore() {
 }
 
 function display_end_screen() {
+  Game_Music.pause()
+  Game_Music.currentTime = 0
   player.classList.add('fadeaway');
 
   enemies.forEach((enemy) => {
     enemy.classList.add('fadeaway');
   });
-
+ 
   clearInterval(spawningID);
 
   main_display.innerHTML = `<h3>YOU LOST!</h3> <br>Score: ${score}`;
@@ -245,9 +247,6 @@ function display_end_screen() {
   }
   main_display.style.display = "block";
   resetButton.style.display = "block";
-
-
-
 }
 
 
@@ -302,7 +301,9 @@ window.addEventListener("keyup", (e) => {
 
 // shooting
 window.addEventListener("click", (e) => {
-  handleShoot(e);
+  if(!lost_game) {
+    handleShoot(e);
+  }
 });
 
 
@@ -334,6 +335,8 @@ function start_spawning() {
 
 // Start the game loop
 function gameLoop(time) {
+
+  Game_Music.play()
   deltaTime = time - elaspedTime;
   movePlayer(deltaTime);
   calculateframes(deltaTime);
