@@ -233,11 +233,10 @@ function display_end_screen() {
 
   main_display.innerHTML = `<h3>YOU LOST!</h3> <br>Score: ${score}`;
   let highscore = window.localStorage.getItem("highscore");
-  if (highscore == "null") {
-    window.localStorage.setItem("highscore", "0");
-    highscore = "0"
+  if (!highscore) {
+    window.localStorage.setItem("highscore", 0);
+    highscore = 0
   }
-  highscore = parseInt(highscore);
   if (score > highscore) {
     window.localStorage.setItem("highscore", `${score}`);
     main_display.innerHTML += "<br>NEW RECORD !!";
