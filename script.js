@@ -3,6 +3,7 @@ let body = document.getElementsByTagName("body")[0];
 let scoreBoard = document.getElementById("score");
 let main_display = document.getElementById("display");
 let resetButton = document.getElementById("resetButton");
+let indexErrorDiv = document.getElementById("error");
 let current_speed = 5;
 let elaspedTime = 0;
 let deltaTime = 0;
@@ -48,6 +49,17 @@ function max(a, b) {
   return a > b ? a : b;
 }
 
+function handleGameStart() {
+  if (window.navigator.userAgentData.mobile === true) {
+    alert(
+      "Game is not optimized for mobile devices. Please play on a desktop or laptop."
+    );
+    indexErrorDiv.innerHTML =
+      "Game is not optimized for mobile devices. Please play on a desktop or laptop.";
+  } else if (window.navigator.userAgentData.mobile === false) {
+    window.location.href = "game.html";
+  }
+}
 // Render movement
 function movePlayer() {
   player.style.top = `${playerTop + PLAYER_OFFSET_Y}px`;
