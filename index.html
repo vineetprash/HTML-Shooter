@@ -1,25 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML-Shooter</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="centerall landing">
+      <div class="title-text">HTML-Shooter</div>
+      <div class="subtitle">Your aimlabs at home</div>
+      <button onclick="window.location.href='game.html'" class="button">
+        Start Game
+      </button>
+    </div>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>HTML-Shooter</title>
-  <link href="style.css" rel="stylesheet" type="text/css" />
-</head>
-
-<body>
-  <div class="scoreboard">
-    <div id="score"></div>
-  </div>
-  <div class="endscreen centerall">
-    <div id="display"></div>
-    <button id="resetButton" style="display:none"> RESET </button>
-  </div>
-  
-  <div id="player1" class=""></div>
-  <script src="script.js"></script>
-
-</body>
-
+    <script src="script.js"></script>
+  </body>
 </html>

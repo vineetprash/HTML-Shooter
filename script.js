@@ -1,5 +1,8 @@
-let playerTop = 0;
-let playerLeft = 0;
+let player = document.getElementById("player1");
+let body = document.getElementsByTagName("body")[0];
+let scoreBoard = document.getElementById("score");
+let main_display = document.getElementById("display");
+let resetButton = document.getElementById("resetButton");
 let current_speed = 5;
 let elaspedTime = 0;
 let deltaTime = 0;
@@ -7,58 +10,52 @@ let bullets = [];
 let bulletCount = 0;
 let enemies = [];
 let enemyCount = 0;
-let mouseX = 0, mouseY = 0, angle_in_deg;
+let mouseX = 0,
+  mouseY = 0,
+  angle_in_deg;
 let keysPressed = {};
 let lost_game = false;
 let spawningID;
 
-let player = document.getElementById("player1");
-let body = document.getElementsByTagName("body")[0];
-let scoreBoard = document.getElementById("score");
-let main_display = document.getElementById("display");
-let resetButton = document.getElementById("resetButton");
-
-
 let score = 0;
-
+let playerTop = 0;
+let playerLeft = 0;
 const PLAYER_WIDTH = 30;
 const PLAYER_HEIGHT = 60;
+let PLAYER_OFFSET_X = 0;
+let PLAYER_OFFSET_Y = 0;
+let RELOADING = false;
 
 const SPEED = 5;
-const BULLET_SPEED = 10; 
-const ENEMY_SPEED = 2;
-const MAX_BULLETS = 10;
-const MAX_ENEMIES = 10;
+const BULLET_SPEED = 10;
+const ENEMY_SPEED = 5;
+const MAX_BULLETS = 6;
+const MAX_ENEMIES = 40;
 const ENEMY_MINW = 40;
 const ENEMY_MAXW = 50;
 const SPAWN_RATE = 1000; // in ms
 
-
 // audio
-const Audio_Shoot = new Audio(`Audio\\shoot1.mp3`)
-const Game_Music = new Audio(`Audio\\game-music.mp3`)
+const Audio_Shoot = new Audio(`Audio\\shoot1.mp3`);
+const Game_Music = new Audio(`Audio\\game-music.mp3`);
+const GameOverSound = new Audio(`Audio\\Gameover.mp3`);
 
-
-body.style.width = `${screen.width}px`;
-body.style.height = `${screen.height}px`;
-
+// body.style.width = `${screen.width}px`;
+// body.style.height = `${screen.height}px`;
 
 // Utilities
 function max(a, b) {
-  return (a > b) ? a : b;
+  return a > b ? a : b;
 }
-
-
 
 // Render movement
 function movePlayer() {
-  player.style.top = `${playerTop}px`;
-  player.style.left = `${playerLeft}px`;
+  player.style.top = `${playerTop + PLAYER_OFFSET_Y}px`;
+  player.style.left = `${playerLeft + PLAYER_OFFSET_X}px`;
   player.style.rotate = angle_in_deg + "deg";
 }
 
 function calculateframes(deltaTime) {
-
   // let dt =  deltaTime / 100;
   let dt = 1;
   if (keysPressed["w"]) {
@@ -89,7 +86,10 @@ function calculateframes(deltaTime) {
     playerLeft = body.clientWidth - PLAYER_WIDTH;
   }
 
-  let angle_in_rad = Math.atan2(mouseY - player.offsetTop, mouseX - player.offsetLeft)
+  let angle_in_rad = Math.atan2(
+    mouseY - player.offsetTop,
+    mouseX - player.offsetLeft
+  );
   angle_in_deg = angle_in_rad * (180 / Math.PI);
 }
 
@@ -99,7 +99,6 @@ function bulletMotion(dt) {
     let bullet = bulletObject.element;
     let bulletY = parseInt(bullet.style.top.replace("px", ""));
     let bulletX = parseInt(bullet.style.left.replace("px", ""));
-
 
     // Check collision with each enemy
     enemies.forEach((enemy, enemyIndex) => {
@@ -120,54 +119,53 @@ function bulletMotion(dt) {
       }
     });
 
-
     bulletY += BULLET_SPEED * dt * Math.sin(bulletObject.angle_in_rad);
     bulletX += BULLET_SPEED * dt * Math.cos(bulletObject.angle_in_rad);
 
-    if (bulletX < 0 || bulletY < 0 || bulletY > body.clientHeight || bulletX > body.clientWidth) {
-      destroyBullet(bulletObject, bulletIndex)
+    if (
+      bulletX < 0 ||
+      bulletY < 0 ||
+      bulletY > body.clientHeight ||
+      bulletX > body.clientWidth
+    ) {
+      destroyBullet(bulletObject, bulletIndex);
     }
 
     bullet.style.top = `${bulletY}px`;
     bullet.style.left = `${bulletX}px`;
-
-  })
-
+  });
 }
 
 function enemyMotion(dt) {
   dt = 1;
   enemies.forEach((enemy) => {
-
     let enemyTop = parseInt(enemy.style.top.replace("px", ""));
     let enemyLeft = parseInt(enemy.style.left.replace("px", ""));
 
-    let angle_to_player = Math.atan2(playerTop - enemy.offsetTop, playerLeft - enemy.offsetLeft);
+    let angle_to_player = Math.atan2(
+      playerTop - enemy.offsetTop,
+      playerLeft - enemy.offsetLeft
+    );
     enemyTop += ENEMY_SPEED * dt * Math.sin(angle_to_player);
     enemyLeft += ENEMY_SPEED * dt * Math.cos(angle_to_player);
 
-    let playerX = (playerLeft + PLAYER_WIDTH / 2);
-    let playerY = (playerTop + PLAYER_HEIGHT / 2);
-
+    let playerX = playerLeft + PLAYER_WIDTH / 2;
+    let playerY = playerTop + PLAYER_HEIGHT / 2;
 
     // Simple bounding box collision detection
     if (
-      playerY < (enemyTop + enemy.clientHeight) &&
-      playerY > (enemyTop) &&
-      playerX < (enemyLeft + enemy.clientWidth) &&
-      playerX > (enemyLeft)
+      playerY < enemyTop + enemy.clientHeight &&
+      playerY > enemyTop &&
+      playerX < enemyLeft + enemy.clientWidth &&
+      playerX > enemyLeft
     ) {
       lost_game = true;
     }
 
-
     enemy.style.top = `${enemyTop}px`;
     enemy.style.left = `${enemyLeft}px`;
-
-  })
+  });
 }
-
-
 
 function handleKeyDown(e) {
   keysPressed[e.key] = true;
@@ -178,7 +176,9 @@ function handleKeyUp(e) {
 }
 
 function handleShoot(e) {
-
+  if (RELOADING) {
+    return;
+  }
   Audio_Shoot.play();
   let bullet = document.createElement("div");
   bullet.className = "bullet";
@@ -186,20 +186,22 @@ function handleShoot(e) {
   bullet.style.left = `${player.offsetLeft}px`;
   body.appendChild(bullet);
 
-
   let bulletObject = {
     element: bullet,
-    angle_in_rad: (angle_in_deg) * Math.PI / 180,
-    rendering: true
-  }
+    angle_in_rad: (angle_in_deg * Math.PI) / 180,
+    rendering: true,
+  };
 
   bulletCount++;
   bullets.push(bulletObject);
- 
 
   if (bulletCount >= MAX_BULLETS) {
-    destroyBullet(bullets[0], 0);
-    destroyBullet(bullets[0], 0);
+    RELOADING = true;
+    player.style.borderLeftColor = "grey";
+    setTimeout(() => {
+      RELOADING = false;
+      player.style.borderLeftColor = "white";
+    }, 1000);
   }
 }
 
@@ -217,50 +219,52 @@ function destroyEnemy(enemy, index) {
 }
 
 function updateScore() {
-  scoreBoard.innerHTML = `Score: ${score}`
+  scoreBoard.innerHTML = `Score: ${score}`;
 }
 
 function display_end_screen() {
-  Game_Music.pause()
-  Game_Music.currentTime = 0
-  player.classList.add('fadeaway');
+  GameOverSound.play();
+  Game_Music.pause();
+  Game_Music.currentTime = 0;
+  player.classList.add("fadeaway");
 
   enemies.forEach((enemy) => {
-    enemy.classList.add('fadeaway');
+    enemy.classList.add("fadeaway");
   });
- 
+
   clearInterval(spawningID);
 
   main_display.innerHTML = `<h3>YOU LOST!</h3> <br>Score: ${score}`;
   let highscore = window.localStorage.getItem("highscore");
   if (!highscore) {
     window.localStorage.setItem("highscore", 0);
-    highscore = 0
+    highscore = 0;
   }
   if (score > highscore) {
     window.localStorage.setItem("highscore", `${score}`);
     main_display.innerHTML += "<br>NEW RECORD !!";
+  } else {
+    main_display.innerHTML += `<br>Previous best: ${highscore}`;
   }
-  else {
-    main_display.innerHTML += `<br>Previous best: ${highscore}`
-  }
-  main_display.style.display = "block";
-  resetButton.style.display = "block";
+  setTimeout(() => {
+    main_display.style.display = "block";
+    resetButton.style.display = "block";
+    main_display.classList.add("fadein");
+    resetButton.classList.add("fadein");
+  }, 4000);
 }
 
-
 function resetGame() {
-
-
-  player.classList.remove('fadeaway');
-
-
+  player.classList.remove("fadeaway");
+  main_display.classList.remove("fadein");
+  resetButton.classList.remove("fadein");
+  GameOverSound.pause();
+  GameOverSound.currentTime = 0;
   main_display.style.display = "none";
   resetButton.style.display = "none";
 
   enemies.forEach((enemy) => {
     enemy.remove();
-
   });
   enemies = [];
   enemyCount = 0;
@@ -281,14 +285,13 @@ function resetGame() {
   gameLoop();
 }
 
-
 resetButton.addEventListener("click", resetGame);
 
 // rotation
 window.addEventListener("mousemove", (e) => {
   mouseX = e.clientX;
   mouseY = e.clientY;
-})
+});
 
 // player movement
 window.addEventListener("keydown", (e) => {
@@ -300,23 +303,20 @@ window.addEventListener("keyup", (e) => {
 
 // shooting
 window.addEventListener("click", (e) => {
-  if(!lost_game) {
+  if (!lost_game) {
     handleShoot(e);
   }
 });
 
-
 // Spawn enemies
 function start_spawning() {
   spawningID = setInterval(() => {
-
     if (enemyCount <= MAX_ENEMIES) {
-
       let x = Math.random() * body.clientHeight;
       let y = Math.random() * body.clientWidth;
       let width = max(ENEMY_MINW, Math.random() * ENEMY_MAXW);
 
-      let new_enemy = document.createElement('div');
+      let new_enemy = document.createElement("div");
       new_enemy.className = "enemy";
       new_enemy.style.top = `${y}px`;
       new_enemy.style.left = `${x}px`;
@@ -324,18 +324,15 @@ function start_spawning() {
 
       body.appendChild(new_enemy);
 
-      enemies.push(new_enemy)
+      enemies.push(new_enemy);
       enemyCount++;
-
     }
-  }, SPAWN_RATE)
+  }, SPAWN_RATE);
 }
-
 
 // Start the game loop
 function gameLoop(time) {
-
-  Game_Music.play()
+  Game_Music.play();
   deltaTime = time - elaspedTime;
   movePlayer(deltaTime);
   calculateframes(deltaTime);
@@ -352,8 +349,3 @@ function gameLoop(time) {
 }
 start_spawning();
 gameLoop();
-
-
-
-
-
