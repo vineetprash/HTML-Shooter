@@ -39,7 +39,7 @@
 }
 
 .title-text {
-  font-family: "kwajong";
+  font-family: "kwajong", sans-serif;
   font-size: 4rem;
   font-weight: bold;
   color: white;
@@ -48,7 +48,7 @@
   text-align: center;
 }
 .subtitle {
-  font-family: "kwajong";
+  font-family: "kwajong", sans-serif;
   font-size: 2rem;
   color: white;
   text-shadow: 0 0 10px 50% black;
@@ -69,7 +69,7 @@ button {
   box-shadow: grey;
   color: white;
   font-size: 1.2rem;
-  font-family: "kwajong";
+  font-family: "kwajong", sans-serif;
 }
 
 button:hover {
@@ -79,7 +79,7 @@ button:hover {
 
 html,
 body {
-  font-family: "kwajong";
+  font-family: "kwajong", sans-serif;
   overflow: hidden;
   zoom: normal;
   margin: 0;
@@ -148,7 +148,7 @@ html {
 }
 
 .endscreen {
-  font-family: "kwajong";
+  font-family: "kwajong", sans-serif;
   position: fixed;
   top: 50px;
   padding: 10px;
@@ -164,7 +164,7 @@ html {
 }
 
 .scoreboard {
-  font-family: "kwajong";
+  font-family: "kwajong", sans-serif;
   top: 0;
   position: fixed;
   display: flex;
@@ -179,7 +179,7 @@ html {
 }
 
 #display {
-  font-family: "kwajong";
+  font-family: "kwajong", sans-serif;
   position: relative;
   bottom: 50px;
   font-size: 3rem;
@@ -190,7 +190,7 @@ html {
 }
 
 #score {
-  font-family: "kwajong";
+  font-family: "kwajong", sans-serif;
   padding: 10px;
   font-size: 40px;
   font-style: bold;
@@ -201,7 +201,7 @@ html {
 }
 
 #display {
-  font-family: "kwajong";
+  font-family: "kwajong", sans-serif;
   display: none;
 }
 
