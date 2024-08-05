@@ -1,5 +1,3 @@
-const difficulty = parseInt(localStorage.getItem("html-shooter-difficulty"));
-
 let current_speed = 5;
 let elaspedTime = 0;
 let deltaTime = 0;
@@ -26,12 +24,15 @@ const scoreBoard = document.getElementById("score");
 const main_display = document.getElementById("display");
 const resetButton = document.getElementById("resetButton");
 const indexErrorDiv = document.getElementById("error");
+const currentDifficulty = document.getElementById("currentDifficulty");
 
 const ENEMY_MINW = 40;
 const ENEMY_MAXW = 50;
 const BULLET_SPEED = 10;
 const PLAYER_WIDTH = 30;
 const PLAYER_HEIGHT = 60;
+const difficulty = parseInt(localStorage.getItem("html-shooter-difficulty"));
+currentDifficulty.innerHTML = getDifficultyLevel(difficulty);
 
 let SPEED = 5;
 let ENEMY_SPEED = 5;
@@ -69,8 +70,6 @@ switch (difficulty) {
     MAX_BULLETS = 4;
     SPAWN_RATE = 800;
     break;
-  default:
-    alert("Unknown difficulty");
 }
 
 // audio
@@ -91,6 +90,20 @@ const RIGHT_KEY = "d" || "D";
 // Utilities
 function max(a, b) {
   return a > b ? a : b;
+}
+function getDifficultyLevel(numeral) {
+  switch (numeral) {
+    case 1:
+      return "Easy";
+    case 2:
+      return "Medium";
+    case 3:
+      return "Hard";
+    case 4:
+      return "Impossible";
+    default:
+      return "Unknown";
+  }
 }
 
 function handleGameStart() {

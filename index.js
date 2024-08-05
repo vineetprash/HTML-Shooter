@@ -1,4 +1,3 @@
-let difficulty = 1;
 function handleGameStart() {
   if (window.navigator.userAgentData.mobile === true) {
     mobileDeviceFound();
@@ -26,7 +25,6 @@ function difficultyDisplay() {
   document.getElementById(
     "difficulty-display"
   ).innerText = `Difficulty: ${level}`;
-  difficulty = difficultyValue;
   localStorage.setItem("html-shooter-difficulty", difficultyValue);
 }
 document
