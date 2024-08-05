@@ -12,9 +12,22 @@
       <div class="subtitle">Your aimlabs at home</div>
       <div class="subtitle">W-A-S-D to move, Aim with mouse cursor</div>
       <div id="error"></div>
-      <button onclick="handleGameStart()" class="button">Start Game</button>
+      <button onclick="handleGameStart()" id="start-button" class="button">
+        Start Game
+      </button>
+
+      <div class="subtitle smaller-subtitle" id="difficulty-display"></div>
+      <input
+        type="range"
+        name="difficulty"
+        id="difficulty"
+        min="1"
+        max="4"
+        value="1"
+      />
+      <script src="index.js"></script>
     </div>
 
-    <script src="script.js"></script>
+    <!-- <script type="module" src="src/index.js"></script> -->
   </body>
 </html>

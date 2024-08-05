@@ -1,9 +1,5 @@
-let player = document.getElementById("player1");
-let body = document.getElementsByTagName("body")[0];
-let scoreBoard = document.getElementById("score");
-let main_display = document.getElementById("display");
-let resetButton = document.getElementById("resetButton");
-let indexErrorDiv = document.getElementById("error");
+const difficulty = parseInt(localStorage.getItem("html-shooter-difficulty"));
+
 let current_speed = 5;
 let elaspedTime = 0;
 let deltaTime = 0;
@@ -11,36 +7,84 @@ let bullets = [];
 let bulletCount = 0;
 let enemies = [];
 let enemyCount = 0;
-let mouseX = 0,
-  mouseY = 0,
-  angle_in_deg;
+let mouseX = 0;
+let mouseY = 0;
+let angle_in_deg;
 let keysPressed = {};
 let lost_game = false;
 let spawningID;
-
 let score = 0;
-let playerTop = 0;
-let playerLeft = 0;
-const PLAYER_WIDTH = 30;
-const PLAYER_HEIGHT = 60;
+let playerTop = screen.height / 2;
+let playerLeft = screen.width / 2;
 let PLAYER_OFFSET_X = 0;
 let PLAYER_OFFSET_Y = 0;
 let RELOADING = false;
 
-const SPEED = 5;
-const BULLET_SPEED = 10;
-const ENEMY_SPEED = 5;
-const MAX_BULLETS = 5;
-const MAX_ENEMIES = 40;
+const player = document.getElementById("player1");
+const body = document.getElementsByTagName("body")[0];
+const scoreBoard = document.getElementById("score");
+const main_display = document.getElementById("display");
+const resetButton = document.getElementById("resetButton");
+const indexErrorDiv = document.getElementById("error");
+
 const ENEMY_MINW = 40;
 const ENEMY_MAXW = 50;
-const SPAWN_RATE = 1000; // in ms
+const BULLET_SPEED = 10;
+const PLAYER_WIDTH = 30;
+const PLAYER_HEIGHT = 60;
+
+let SPEED = 5;
+let ENEMY_SPEED = 5;
+let MAX_BULLETS = 5;
+let MAX_ENEMIES = 40;
+let SPAWN_RATE = 1000; // in ms
+
+switch (difficulty) {
+  case 1:
+    SPEED = 6;
+    ENEMY_SPEED = 1.5;
+    MAX_ENEMIES = 10;
+    MAX_BULLETS = 10;
+    SPAWN_RATE = 3000;
+    break;
+
+  case 2:
+    SPEED = 5;
+    ENEMY_SPEED = 3.5;
+    MAX_ENEMIES = 20;
+    MAX_BULLETS = 7;
+    SPAWN_RATE = 1000;
+    break;
+  case 3:
+    SPEED = 4;
+    ENEMY_SPEED = 6;
+    MAX_ENEMIES = 40;
+    MAX_BULLETS = 5;
+    SPAWN_RATE = 1000;
+    break;
+  case 4:
+    SPEED = 3;
+    ENEMY_SPEED = 7;
+    MAX_ENEMIES = 40;
+    MAX_BULLETS = 4;
+    SPAWN_RATE = 800;
+    break;
+  default:
+    alert("Unknown difficulty");
+}
 
 // audio
 const Audio_Shoot = new Audio(`Audio\\shoot1.mp3`);
 const Game_Music = new Audio(`Audio\\game-music.mp3`);
 const GameOverSound = new Audio(`Audio\\Gameover.mp3`);
 
+const SHOOT_KEY_1 = "";
+const SHOOT_KEY_2 = null;
+const BOOST_KEY = " ";
+const UP_KEY = "w" || "W";
+const LEFT_KEY = "a" || "A";
+const DOWN_KEY = "s" || "S";
+const RIGHT_KEY = "d" || "D";
 // body.style.width = `${screen.width}px`;
 // body.style.height = `${screen.height}px`;
 
@@ -51,9 +95,7 @@ function max(a, b) {
 
 function handleGameStart() {
   if (window.navigator.userAgentData.mobile === true) {
-    alert(
-      "Game is not optimized for mobile devices. Please play on a desktop or laptop."
-    );
+    mobileDeviceFound();
     indexErrorDiv.innerHTML =
       "Game is not optimized for mobile devices. Please play on a desktop or laptop.";
   } else if (window.navigator.userAgentData.mobile === false) {
@@ -68,24 +110,27 @@ function movePlayer() {
 }
 
 function calculateframes(deltaTime) {
-  // let dt =  deltaTime / 100;
-  let dt = 1;
-  if (keysPressed["w"]) {
+  // const dt =  deltaTime / 100;
+  const dt = 1;
+  if (keysPressed[SHOOT_KEY_1] || keysPressed[SHOOT_KEY_2]) {
+    handleShoot();
+  }
+  if (keysPressed[UP_KEY]) {
     playerTop -= current_speed * dt;
   }
-  if (keysPressed["a"]) {
+  if (keysPressed[LEFT_KEY]) {
     playerLeft -= current_speed * dt;
   }
-  if (keysPressed["s"]) {
+  if (keysPressed[DOWN_KEY]) {
     playerTop += current_speed * dt;
   }
-  if (keysPressed["d"]) {
+  if (keysPressed[RIGHT_KEY]) {
     playerLeft += current_speed * dt;
   }
-  if (keysPressed[" "]) {
+  if (keysPressed[BOOST_KEY]) {
     current_speed = SPEED * 2;
   }
-  if (!keysPressed[" "]) {
+  if (!keysPressed[BOOST_KEY]) {
     current_speed = SPEED;
   }
 
@@ -98,7 +143,7 @@ function calculateframes(deltaTime) {
     playerLeft = body.clientWidth - PLAYER_WIDTH;
   }
 
-  let angle_in_rad = Math.atan2(
+  const angle_in_rad = Math.atan2(
     mouseY - player.offsetTop,
     mouseX - player.offsetLeft
   );
@@ -108,14 +153,14 @@ function calculateframes(deltaTime) {
 function bulletMotion(dt) {
   dt = 1;
   bullets.forEach((bulletObject, bulletIndex) => {
-    let bullet = bulletObject.element;
+    const bullet = bulletObject.element;
     let bulletY = parseInt(bullet.style.top.replace("px", ""));
     let bulletX = parseInt(bullet.style.left.replace("px", ""));
 
     // Check collision with each enemy
     enemies.forEach((enemy, enemyIndex) => {
-      let enemyTop = parseInt(enemy.style.top.replace("px", ""));
-      let enemyLeft = parseInt(enemy.style.left.replace("px", ""));
+      const enemyTop = parseInt(enemy.style.top.replace("px", ""));
+      const enemyLeft = parseInt(enemy.style.left.replace("px", ""));
 
       // Simple bounding box collision detection
       if (
@@ -142,7 +187,7 @@ function bulletMotion(dt) {
     ) {
       destroyBullet(bulletObject, bulletIndex);
     }
-
+    // finally render
     bullet.style.top = `${bulletY}px`;
     bullet.style.left = `${bulletX}px`;
   });
@@ -154,15 +199,15 @@ function enemyMotion(dt) {
     let enemyTop = parseInt(enemy.style.top.replace("px", ""));
     let enemyLeft = parseInt(enemy.style.left.replace("px", ""));
 
-    let angle_to_player = Math.atan2(
+    const angle_to_player = Math.atan2(
       playerTop - enemy.offsetTop,
       playerLeft - enemy.offsetLeft
     );
     enemyTop += ENEMY_SPEED * dt * Math.sin(angle_to_player);
     enemyLeft += ENEMY_SPEED * dt * Math.cos(angle_to_player);
 
-    let playerX = playerLeft + PLAYER_WIDTH / 2;
-    let playerY = playerTop + PLAYER_HEIGHT / 2;
+    const playerX = playerLeft + PLAYER_WIDTH / 2;
+    const playerY = playerTop + PLAYER_HEIGHT / 2;
 
     // Simple bounding box collision detection
     if (
@@ -173,7 +218,7 @@ function enemyMotion(dt) {
     ) {
       lost_game = true;
     }
-
+    // finally render
     enemy.style.top = `${enemyTop}px`;
     enemy.style.left = `${enemyLeft}px`;
   });
@@ -187,18 +232,18 @@ function handleKeyUp(e) {
   keysPressed[e.key] = false;
 }
 
-function handleShoot(e) {
+function handleShoot() {
   if (RELOADING) {
     return;
   }
   Audio_Shoot.play();
-  let bullet = document.createElement("div");
+  const bullet = document.createElement("div");
   bullet.className = "bullet";
   bullet.style.top = `${player.offsetTop}px`;
   bullet.style.left = `${player.offsetLeft}px`;
   body.appendChild(bullet);
 
-  let bulletObject = {
+  const bulletObject = {
     element: bullet,
     angle_in_rad: (angle_in_deg * Math.PI) / 180,
     rendering: true,
@@ -209,10 +254,11 @@ function handleShoot(e) {
 
   if (bulletCount >= MAX_BULLETS) {
     RELOADING = true;
-    player.style.borderLeftColor = "grey";
+    let color = player.style.borderLeftColor;
+    player.style.borderLeftColor = "transparent";
     setTimeout(() => {
       RELOADING = false;
-      player.style.borderLeftColor = "white";
+      player.style.borderLeftColor = color;
     }, 1000);
   }
 }
@@ -246,7 +292,7 @@ function display_end_screen() {
 
   clearInterval(spawningID);
 
-  main_display.innerHTML = `<h3>YOU LOST!</h3> <br>Score: ${score}`;
+  main_display.innerHTML = `<h3>YOU LOST !</h3> <br>Score: ${score}`;
   let highscore = window.localStorage.getItem("highscore");
   if (!highscore) {
     window.localStorage.setItem("highscore", 0);
@@ -287,8 +333,8 @@ function resetGame() {
   bullets = [];
   bulletCount = 0;
 
-  playerTop = 0;
-  playerLeft = 0;
+  playerTop = screen.height / 2;
+  playerLeft = screen.width / 2;
   score = 0;
   lost_game = false;
 
@@ -297,6 +343,7 @@ function resetGame() {
   gameLoop();
 }
 
+// startButton.addEventListener("click", handleGameStart);
 resetButton.addEventListener("click", resetGame);
 
 // rotation
@@ -312,23 +359,35 @@ window.addEventListener("keydown", (e) => {
 window.addEventListener("keyup", (e) => {
   handleKeyUp(e);
 });
-
+window.addEventListener("touch", mobileDeviceFound);
 // shooting
 window.addEventListener("click", (e) => {
   if (!lost_game) {
-    handleShoot(e);
+    handleShoot();
   }
 });
+// window.addEventListener("contextmenu", (e) => {
+//   e.preventDefault();
+//   if (!lost_game) {
+//     handleShoot();
+//   }
+// });
+
+function mobileDeviceFound() {
+  alert(
+    "Game is not optimized for mobile devices. Please play on a desktop or laptop."
+  );
+}
 
 // Spawn enemies
 function start_spawning() {
   spawningID = setInterval(() => {
     if (enemyCount <= MAX_ENEMIES) {
-      let x = Math.random() * body.clientHeight;
-      let y = Math.random() * body.clientWidth;
-      let width = max(ENEMY_MINW, Math.random() * ENEMY_MAXW);
+      const x = Math.random() * body.clientHeight;
+      const y = Math.random() * body.clientWidth;
+      const width = max(ENEMY_MINW, Math.random() * ENEMY_MAXW);
 
-      let new_enemy = document.createElement("div");
+      const new_enemy = document.createElement("div");
       new_enemy.className = "enemy";
       new_enemy.style.top = `${y}px`;
       new_enemy.style.left = `${x}px`;

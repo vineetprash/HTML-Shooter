@@ -1,0 +1,12 @@
+{
+  "type": "module",
+  "name": "html-shooter",
+  "version": "1.0.0",
+  "description": "A simple game where you control a spaceship and shoot enemies. Made purely in HTML, CSS, JavaScript.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

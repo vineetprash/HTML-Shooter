@@ -1,3 +1,25 @@
+:root {
+  --playerColor: rgb(84, 221, 221);
+  --primaryShadow: rgb(84, 221, 221, 0.5);
+}
+
+* {
+  user-select: none;
+}
+
+@font-face {
+  font-family: "moonhouse";
+  src: url("/fonts/Moonhouse-yE5M.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "kwajong";
+  src: url("/fonts/Kwajong-BVRG.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 .centerall {
   display: flex;
   justify-content: center;
@@ -12,26 +34,31 @@
   min-height: 100%;
   width: 100%;
   background-color: black;
+  box-shadow: inset -10px 0px 20px 0.001px rgb(255, 71, 71, 0.2),
+    inset 10px 0px 20px 0.001px rgba(43, 162, 252, 0.5);
 }
 
 .title-text {
-  font-size: 3rem;
+  font-family: "kwajong";
+  font-size: 4rem;
   font-weight: bold;
   color: white;
   text-shadow: 0 0 10px 50% black;
   padding: 1rem;
   text-align: center;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 .subtitle {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 1.1rem;
+  font-family: "kwajong";
+  font-size: 2rem;
   color: white;
   text-shadow: 0 0 10px 50% black;
   padding: 1rem;
   text-align: center;
 }
-
+.smaller-subtitle {
+  font-size: 1.8rem;
+  color: rgb(182, 182, 182);
+}
 button {
   margin: 20px;
   height: 60px;
@@ -42,6 +69,7 @@ button {
   box-shadow: grey;
   color: white;
   font-size: 1.2rem;
+  font-family: "kwajong";
 }
 
 button:hover {
@@ -51,6 +79,7 @@ button:hover {
 
 html,
 body {
+  font-family: "kwajong";
   overflow: hidden;
   zoom: normal;
   margin: 0;
@@ -58,6 +87,9 @@ body {
   width: 100%;
   background: black;
   z-index: -10;
+  cursor: crosshair;
+  box-shadow: inset -10px 0px 20px 0.001px rgb(255, 71, 71, 0.2),
+    inset 10px 0px 20px 0.001px rgba(43, 162, 252, 0.5);
 }
 html {
   display: flex;
@@ -71,14 +103,15 @@ html {
   aspect-ratio: 1;
   width: 10px;
   border-radius: 50%;
-  box-shadow: 0 0 5px 2px white;
+  box-shadow: 0 0 5px 2px var(--playerColor);
   z-index: 0;
   user-select: none;
 }
 
 .enemy {
   position: absolute;
-  background: white;
+  background: rgb(255, 71, 71);
+  box-shadow: 0 0 30px 5px rgb(255, 71, 71, 0.25);
   aspect-ratio: 1;
   z-index: 0;
   user-select: none;
@@ -86,18 +119,29 @@ html {
 
 #player1 {
   position: relative;
-  top: 0;
-  left: 0;
-  border-left: 30px solid white;
-  border-top: 30px solid transparent;
-  border-bottom: 30px solid transparent;
+  top: 50%;
+  left: 50%;
+  border-left: 30px solid var(--playerColor);
+
+  border-top: 30px inset var(--playerColor);
+  border-bottom: 30px inset var(--playerColor);
+  border-right: 30px solid transparent;
   width: 0px;
   height: 0px;
   /* box-shadow: 0 0 5px #000000; */
   border-radius: 50%;
 }
 
+#player1::after {
+  width: 0;
+  width: 0;
+  top: 0;
+  position: inherit;
+  box-shadow: 0 0 55px 5px red;
+}
+
 .endscreen {
+  font-family: "kwajong";
   position: fixed;
   top: 50px;
   padding: 10px;
@@ -113,6 +157,7 @@ html {
 }
 
 .scoreboard {
+  font-family: "kwajong";
   top: 0;
   position: fixed;
   display: flex;
@@ -121,30 +166,35 @@ html {
   width: 100%;
   height: 5%;
   padding: 10px;
+  margin-top: 8px;
   z-index: 5;
   user-select: none;
 }
 
 #display {
+  font-family: "kwajong";
   position: relative;
   bottom: 50px;
-  font-size: 60px;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 3rem;
   color: rgb(155, 156, 167);
   text-align: center;
   user-select: none;
+  margin-top: 20px;
 }
 
 #score {
+  font-family: "kwajong";
   padding: 10px;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 40px;
   font-style: bold;
   color: white;
   user-select: none;
+  border-bottom: 2px solid white;
+  border-radius: 5px;
 }
 
 #display {
+  font-family: "kwajong";
   display: none;
 }
 
